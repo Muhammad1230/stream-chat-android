@@ -335,6 +335,8 @@ internal constructor(
             is DisconnectCause.Error,
             -> if (ToggleService.isSocketExperimental().not()) socketStateService.onDisconnected()
             is DisconnectCause.UnrecoverableError -> {
+                logger.d { "UnrecoverableError id: ${disconnectedEvent.disconnectCause.id}" }
+
                 userStateService.onSocketUnrecoverableError()
                 if (ToggleService.isSocketExperimental().not()) {
                     socketStateService.onSocketUnrecoverableError()

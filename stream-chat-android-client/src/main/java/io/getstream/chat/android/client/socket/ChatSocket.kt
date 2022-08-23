@@ -115,7 +115,7 @@ internal open class ChatSocket constructor(
                 is State.DisconnectedByRequest -> {
                     shutdownSocketConnection()
                     healthMonitor.stop()
-                    callListeners { it.onDisconnected(DisconnectCause.ConnectionReleased) }
+                    callListenersOnUiThread { it.onDisconnected(DisconnectCause.ConnectionReleased) }
                 }
                 is State.DisconnectedTemporarily -> {
                     shutdownSocketConnection()
@@ -128,11 +128,17 @@ internal open class ChatSocket constructor(
                     networkStateProvider.unsubscribe(networkStateListener)
                     healthMonitor.stop()
 
-                    callListeners { listener ->
+                    val randomString = randomString()
+
+                    logger.d { "Creating UnrecoverableError with id: $randomString" }
+
+                    callListenersOnUiThread { listener ->
                         listener.onDisconnected(
-                            DisconnectCause.UnrecoverableError(newState.error)
+                            DisconnectCause.UnrecoverableError(newState.error, randomString)
                         )
                     }
+
+                    logger.d { "Event with id $randomString propagated" }
                 }
             }
         }
@@ -307,7 +313,7 @@ internal open class ChatSocket constructor(
     }
 
     private fun callListenersOnUiThread(call: (SocketListener) -> Unit) {
-        eventUiHandler.post {
+        coroutineScope.launch(DispatcherProvider.Main) {
             callListeners(call)
         }
     }
@@ -333,5 +339,13 @@ internal open class ChatSocket constructor(
         object DisconnectedByRequest : State() {
             override fun toString(): String = "DisconnectedByRequest"
         }
+    }
+}
+
+private val charPool: CharArray = (('a'..'z') + ('A'..'Z') + ('0'..'9')).toCharArray()
+
+public fun randomString(size: Int = 20): String = buildString(capacity = size) {
+    repeat(size) {
+        append(charPool.random())
     }
 }

@@ -273,7 +273,7 @@ internal open class ChatSocket constructor(
                 logger.d {
                     "One unrecoverable error happened. Error: ${error.stringify()}. Error code: ${error.streamCode}"
                 }
-                disconnect(DisconnectCause.UnrecoverableError(error))
+                disconnect(DisconnectCause.UnrecoverableError(error, "id1"))
             }
             else -> {
                 disconnect(DisconnectCause.Error(error))
