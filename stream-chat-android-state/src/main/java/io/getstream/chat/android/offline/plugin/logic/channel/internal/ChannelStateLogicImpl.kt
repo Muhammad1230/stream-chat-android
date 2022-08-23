@@ -132,6 +132,10 @@ internal class ChannelStateLogicImpl(
                     this[currentUserId]?.lastMessageSeenDate = message.createdAt
                     this[currentUserId]?.unreadMessages = unreadCount + 1
                 }
+
+                StreamLog.d(TAG) {
+                    "incrementing unread count"
+                }
                 mutableState.setUnreadCount(unreadCount + 1)
             }
         }
@@ -178,8 +182,9 @@ internal class ChannelStateLogicImpl(
                 ) == true
 
                 if (shouldUpdateByIncoming) {
-                    mutableState.setRead(incomingUserRead)
-                    mutableState.setUnreadCount(incomingUserRead.unreadMessages)
+                    StreamLog.d(TAG) { "new incomingUserRead: ${incomingUserRead.unreadMessages}" }
+                    // mutableState.setRead(incomingUserRead)
+                    // mutableState.setUnreadCount(incomingUserRead.unreadMessages)
                 } else {
                     // if the previous Read was more current, replace the item in the update map
                     incomingUserIdToReadMap[currentUserId] = ChannelUserRead(currentUser, previousLastRead)
@@ -428,7 +433,7 @@ internal class ChannelStateLogicImpl(
         updateChannelData(channel)
         setWatcherCount(channel.watcherCount)
 
-        mutableState.setRead(mutableState.read.value)
+        // mutableState.setRead(mutableState.read.value)
         mutableState.setMembersCount(channel.memberCount)
 
         updateReads(channel.read)
@@ -474,6 +479,10 @@ internal class ChannelStateLogicImpl(
      * @param request [QueryChannelRequest]
      */
     override fun propagateChannelQuery(channel: Channel, request: QueryChannelRequest) {
+        StreamLog.d(TAG) {
+            "[propagateChannelQuery] unread count: ${channel.unreadCount}"
+        }
+
         val noMoreMessages = request.messagesLimit() > channel.messages.size
 
         searchLogic.handleMessageBounds(request, noMoreMessages)

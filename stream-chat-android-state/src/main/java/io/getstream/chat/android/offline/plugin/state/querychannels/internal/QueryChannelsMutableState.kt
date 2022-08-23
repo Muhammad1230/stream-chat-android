@@ -60,20 +60,8 @@ internal class QueryChannelsMutableState(
         _channels.combine(latestUsers) { channelMap, userMap ->
             channelMap?.values?.updateUsers(userMap)
         }.map { channels ->
-            if (channels?.isNotEmpty() == true) {
-                logger.d {
-                    val ids = channels.joinToString { channel -> channel.id }
-                    "Sorting channels: $ids"
-                }
-            }
-
             channels?.sortedWith(sort.comparator).also { sortedChannels ->
-                if (sortedChannels?.isNotEmpty() == true) {
-                    logger.d {
-                        val ids = sortedChannels.joinToString { channel -> channel.id }
-                        "Sorting result: $ids"
-                    }
-                }
+                logger.d { "first channel unread count: ${sortedChannels?.get(0)?.unreadCount}" }
             }
         }.stateIn(scope, SharingStarted.Eagerly, null)
     internal val _currentRequest = MutableStateFlow<QueryChannelsRequest?>(null)

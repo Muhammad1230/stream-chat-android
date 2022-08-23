@@ -249,9 +249,9 @@ internal class ChannelLogic(
         return selectAndEnrichChannel(mutableState.cid, request)?.also { channel ->
             logger.i { "Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages" }
             if (request.filteringOlderMessages()) {
-                updateOldMessagesFromLocalChannel(channel)
+                // updateOldMessagesFromLocalChannel(channel)
             } else {
-                updateDataFromLocalChannel(channel)
+                // updateDataFromLocalChannel(channel)
             }
         }
     }

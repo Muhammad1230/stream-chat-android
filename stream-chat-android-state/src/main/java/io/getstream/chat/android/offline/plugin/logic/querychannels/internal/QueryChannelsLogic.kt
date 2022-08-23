@@ -141,6 +141,10 @@ internal class QueryChannelsLogic(
     }
 
     private suspend fun addChannels(channels: List<Channel>, queryChannelsRepository: QueryChannelsRepository) {
+        channels.forEach { channel ->
+            logger.d { "channel ${channel.name} unread count: ${channel.unreadCount}" }
+        }
+
         mutableState.queryChannelsSpec.cids += channels.map { it.cid }
         queryChannelsRepository.insertQueryChannels(mutableState.queryChannelsSpec)
         val existingChannels = mutableState.rawChannels ?: emptyMap()
@@ -423,6 +427,10 @@ internal class QueryChannelsLogic(
                     channelType = channelType,
                     channelId = channelId,
                 ).toChannel()
+            }.also { channelsMap ->
+                channelsMap.values.forEach { channel ->
+                    logger.d { "[refreshChannels] channel ${channel.name} unread count: ${channel.unreadCount}" }
+                }
             }
     }
 
