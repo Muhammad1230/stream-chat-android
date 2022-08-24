@@ -74,6 +74,7 @@ dependencies {
     implementation Dependencies.retrofit
     implementation Dependencies.moshi
     implementation Dependencies.retrofitMoshiConverter
+    implementation Dependencies.threeTenAbp
     ksp Dependencies.moshiCodegen
     implementation Dependencies.okhttpLoggingInterceptor
     implementation Dependencies.ok2curl

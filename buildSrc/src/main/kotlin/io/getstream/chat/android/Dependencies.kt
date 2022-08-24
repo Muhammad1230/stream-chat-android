@@ -37,7 +37,7 @@ object Versions {
     internal const val FIREBASE_CRASHLYTICS = "18.2.12"
     internal const val FIREBASE_CRASHLYTICS_PLUGIN = "2.9.1"
     internal const val FIREBASE_MESSAGING = "23.0.6"
-    internal const val FLIPPER = "0.156.0"
+    internal const val FLIPPER = "0.162.0"
     internal const val FLIPPER_SO_LOADER = "0.10.4"
     internal const val GITVERSIONER = "0.5.0"
     internal const val GOOGLE_SERVICES = "4.3.13"

@@ -62,11 +62,18 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import org.threeten.bp.Instant
+import org.threeten.bp.ZoneId
+import org.threeten.bp.format.DateTimeFormatter
+import org.threeten.bp.format.DateTimeFormatterBuilder
+import org.threeten.bp.temporal.ChronoField
 import java.util.Date
+import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 
 private const val QUERIES_TO_RETRY = 3
+private const val DATE_FORMAT_SECONDS = "yyyy-MM-dd'T'HH:mm:ss"
 
 /**
  * This class is responsible to sync messages, reactions and channel data. It tries to sync then, if necessary,
@@ -84,7 +91,14 @@ internal class SyncManager(
     scope: CoroutineScope,
 ) : SyncHistoryManager {
 
-    private val logger = StreamLog.getLogger("Chat:SyncManager")
+    private val formatter: DateTimeFormatter =
+        DateTimeFormatterBuilder()
+            .appendPattern(DATE_FORMAT_SECONDS)
+            .appendFraction(ChronoField.MICRO_OF_SECOND, 0, 9, true)
+            .appendZoneOrOffsetId()
+            .toFormatter(Locale.US)
+
+    private val logger = StreamLog.getLogger("SyncManager")
 
     private val syncScope = scope + SupervisorJob(scope.coroutineContext.job) +
         CoroutineExceptionHandler { context, throwable ->
@@ -211,11 +225,28 @@ internal class SyncManager(
             return
         }
         val lastSyncAt = syncState.value?.lastSyncedAt ?: Date()
-        logger.i { "[performSync] cids.size: ${cids.size}, lastSyncAt: $lastSyncAt" }
+
+        val formattedSyncAt = Instant.ofEpochMilli(lastSyncAt.time)
+            .atZone(ZoneId.of("UTC"))
+            .let(formatter::format)
+
+        logger.i { "[performSync] request - cids.size: ${cids.size}, lastSyncAt: $formattedSyncAt" }
+
         val result = chatClient.getSyncHistory(cids, lastSyncAt).await()
         if (result.isSuccess) {
             val sortedEvents = result.data().sortedBy { it.createdAt }
             logger.d { "[performSync] succeed(${sortedEvents.size})" }
+
+            val lastEvent = sortedEvents.lastOrNull()
+
+            val formattedCreatedAt = lastEvent?.createdAt
+                ?.time
+                ?.let(Instant::ofEpochMilli)
+                ?.atZone(ZoneId.of("UTC"))
+                ?.let(formatter::format) ?: "null"
+
+            logger.d { "result - last event date: $formattedCreatedAt" }
+
             val latestEventDate = sortedEvents.lastOrNull()?.createdAt ?: Date()
             updateLastSyncedDate(latestEventDate)
             sortedEvents.forEach {

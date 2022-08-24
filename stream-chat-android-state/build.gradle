@@ -67,6 +67,8 @@ dependencies {
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.workRuntimeKtx
 
+    implementation Dependencies.threeTenAbp
+
     // Tests
     testImplementation project(":stream-chat-android-test")
     testImplementation project(":stream-chat-android-client-test")
