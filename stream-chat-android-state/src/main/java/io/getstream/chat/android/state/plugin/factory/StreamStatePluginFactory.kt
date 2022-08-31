@@ -33,6 +33,7 @@ import io.getstream.chat.android.offline.errorhandler.factory.internal.OfflineEr
 import io.getstream.chat.android.offline.event.handler.internal.EventHandler
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerImpl
 import io.getstream.chat.android.offline.event.handler.internal.EventHandlerSequential
+import io.getstream.chat.android.offline.event.handler.internal.QueryChannelsTrack
 import io.getstream.chat.android.offline.interceptor.internal.SendMessageInterceptorImpl
 import io.getstream.chat.android.offline.plugin.listener.internal.ChannelMarkReadListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerState
@@ -136,6 +137,9 @@ public class StreamStatePluginFactory(
         val stateRegistry = StateRegistry.create(
             scope.coroutineContext.job, scope, clientState.user, repositoryFacade, repositoryFacade.observeLatestUsers()
         )
+
+        val queryChannelsTrack = QueryChannelsTrack()
+
         val logic = LogicRegistry.create(
             stateRegistry = stateRegistry,
             globalState = globalState,
@@ -144,6 +148,7 @@ public class StreamStatePluginFactory(
             client = chatClient,
             clientState = clientState,
             coroutineScope = scope,
+            queryChannelsTrack = queryChannelsTrack
         )
 
         val sendMessageInterceptor = SendMessageInterceptorImpl(
@@ -195,7 +200,7 @@ public class StreamStatePluginFactory(
             mutableGlobalState = globalState,
             repos = repositoryFacade,
             syncedEvents = syncManager.syncedEvents,
-            sideEffect = syncManager::awaitSyncing
+            sideEffect = syncManager::awaitSyncing,
         )
         eventHandler.startListening()
 
@@ -225,7 +230,11 @@ public class StreamStatePluginFactory(
 
         return StatePlugin(
             activeUser = user,
-            queryChannelsListener = QueryChannelsListenerImpl(logic, eventHandler as EventHandlerSequential),
+            queryChannelsListener = QueryChannelsListenerImpl(
+                logic,
+                eventHandler as EventHandlerSequential,
+                queryChannelsTrack
+            ),
             queryChannelListener = QueryChannelListenerImpl(logic),
             threadQueryListener = ThreadQueryListenerFull(logic, repositoryFacade, repositoryFacade, getMessageFun),
             channelMarkReadListener = ChannelMarkReadListenerState(channelMarkReadHelper),
