@@ -110,7 +110,7 @@ internal class QueryChannelsLogic(
         return repos.selectChannels(query.cids.toList(), pagination)
             .applyPagination(pagination)
             .also { logger.i { "[fetchChannelsFromCache] found ${it.size} channels in offline storage" } }
-            .also { addChannels(it, repos) }
+            .also { addChannels(it) }
     }
 
     /**
@@ -119,7 +119,7 @@ internal class QueryChannelsLogic(
      * @param channel [Channel]
      */
     private suspend fun addChannel(channel: Channel) {
-        addChannels(listOf(channel), repos)
+        addChannels(listOf(channel))
     }
 
     /**
@@ -135,12 +135,14 @@ internal class QueryChannelsLogic(
         }
     }
 
-    private suspend fun addChannels(channels: List<Channel>, queryChannelsRepository: QueryChannelsRepository) {
-        mutableState.queryChannelsSpec.cids += channels.map { it.cid }
-        queryChannelsRepository.insertQueryChannels(mutableState.queryChannelsSpec)
-        val existingChannels = mutableState.rawChannels ?: emptyMap()
-        mutableState.rawChannels = existingChannels + channels.map { it.cid to it }
-        channels.forEach { logicRegistry.channel(it.type, it.id).updateDataFromChannel(it) }
+    private suspend fun addChannels(channels: List<Channel>) {
+        var cids = queryChannelsStateLogic?.getQuerySpecs()?.cids ?: emptySet()
+        cids += channels.map { it.cid }
+
+        queryChannelsStateLogic?.addChannelsState(channels)
+        queryChannelsStateLogic?.getQuerySpecs()?.let { specs ->
+            queryChannelsDatabaseLogic?.insertQueryChannels(specs)
+        }
     }
 
     suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
@@ -287,7 +289,7 @@ internal class QueryChannelsLogic(
             logger.v { "[updateOnlineChannels] newChannelsOffset: $newChannelsOffset <= $currentChannelsOffset" }
             mutableState.channelsOffset.value = newChannelsOffset
         }
-        addChannels(channels, repos)
+        addChannels(channels)
     }
 
     /**
