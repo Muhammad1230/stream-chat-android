@@ -26,10 +26,8 @@ import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
-import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.applyPagination
-import io.getstream.chat.android.client.extensions.internal.toCid
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelConfig
@@ -43,7 +41,6 @@ import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationReq
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.offline.plugin.state.StateRegistry
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.QueryChannelsMutableState
@@ -62,7 +59,7 @@ internal class QueryChannelsLogic(
     private val client: ChatClient,
     private val repos: RepositoryFacade,
     private val logicRegistry: LogicRegistry,
-    private val stateRegistry: StateRegistry,
+    private val queryChannelsStateLogic: QueryChannelsStateLogic?,
 ) {
 
     private val logger = StreamLog.getLogger("QueryChannelsLogic")
@@ -398,27 +395,7 @@ internal class QueryChannelsLogic(
      * @param cidList The channels to refresh.
      */
     private fun refreshChannels(cidList: Collection<String>) {
-        val existingChannels = mutableState.rawChannels
-        if (existingChannels == null) {
-            logger.w { "[refreshChannels] rejected (existingChannels is null)" }
-            return
-        }
-        mutableState.rawChannels = existingChannels + mutableState.queryChannelsSpec.cids
-            .intersect(cidList.toSet())
-            .map { cid -> cid.cidToTypeAndId() }
-            .filter { (channelType, channelId) ->
-                stateRegistry.isActiveChannel(
-                    channelType = channelType,
-                    channelId = channelId,
-                )
-            }
-            .associate { (channelType, channelId) ->
-                val cid = (channelType to channelId).toCid()
-                cid to stateRegistry.channel(
-                    channelType = channelType,
-                    channelId = channelId,
-                ).toChannel()
-            }
+        queryChannelsStateLogic?.refreshChannels(cidList)
     }
 
     /**
