@@ -60,6 +60,7 @@ internal class QueryChannelsLogic(
     private val repos: RepositoryFacade,
     private val logicRegistry: LogicRegistry,
     private val queryChannelsStateLogic: QueryChannelsStateLogic?,
+    private val queryChannelsDatabaseLogic: QueryChannelsDatabaseLogic?,
 ) {
 
     private val logger = StreamLog.getLogger("QueryChannelsLogic")

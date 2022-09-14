@@ -30,6 +30,7 @@ import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelSt
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.SearchLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.thread.internal.ThreadStateLogicImpl
+import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsDatabaseLogic
 import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsStateLogic
 import io.getstream.chat.android.offline.plugin.state.StateRegistry
@@ -73,12 +74,23 @@ internal class LogicRegistry internal constructor(
                 this
             )
 
+            val queryChannelsDatabaseLogic = QueryChannelsDatabaseLogic(
+                repos,
+                repos,
+                repos,
+                repos,
+                repos,
+                coroutineScope,
+                repos.provideConfig()
+            )
+
             QueryChannelsLogic(
                 stateRegistry.queryChannels(filter, sort).toMutableState(),
                 client,
                 repos,
                 this,
-                queryChannelsStateLogic
+                queryChannelsStateLogic,
+                queryChannelsDatabaseLogic
             )
         }
     }
