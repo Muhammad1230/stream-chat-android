@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.plugin.listener.internal
+package io.getstream.chat.android.client.query.logic
 
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.offline.model.querychannels.pagination.internal.QueryChannelsPaginationRequest
-import io.getstream.chat.android.offline.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
-import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.client.query.logic.QueryChannelsRequestHandlerProvider
+import io.getstream.chat.android.client.query.request.QueryChannelsPaginationRequest
+import io.getstream.chat.android.client.query.request.mapper.toAnyChannelPaginationRequest
 
 /**
  * [QueryChannelsListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
  * Handles querying the channel offline and managing local state updates.
  *
- * @param logicProvider [QueryChannelsRequestHandlerProvider] 
+ * @param logicProvider [QueryChannelsRequestHandlerProvider]
  */
 internal class QueryChannelsListenerImpl(
     private val logicProvider: QueryChannelsRequestHandlerProvider,

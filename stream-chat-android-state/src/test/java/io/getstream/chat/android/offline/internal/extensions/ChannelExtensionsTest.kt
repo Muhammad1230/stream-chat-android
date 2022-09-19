@@ -29,7 +29,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.MessageSyncContent
 import io.getstream.chat.android.client.parser2.adapters.DateAdapter
 import io.getstream.chat.android.client.test.randomChannel
-import io.getstream.chat.android.offline.model.querychannels.pagination.internal.QueryChannelsPaginationRequest
+import io.getstream.chat.android.client.query.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import okio.buffer
 import okio.source

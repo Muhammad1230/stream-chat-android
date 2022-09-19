@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.model.querychannels.pagination.internal
+package io.getstream.chat.android.client.query.request
 
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
 
-internal data class QueryChannelsPaginationRequest(
+public data class QueryChannelsPaginationRequest(
     val sort: QuerySorter<Channel>,
     val channelOffset: Int = 0,
     val channelLimit: Int = 30,
