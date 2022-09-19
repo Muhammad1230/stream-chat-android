@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.query.logic.QueryChannelsRequestHandlerProvider
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelStateLogic
@@ -57,7 +58,7 @@ internal class LogicRegistry internal constructor(
     private val repos: RepositoryFacade,
     private val client: ChatClient,
     private val coroutineScope: CoroutineScope,
-) : ChannelStateLogicProvider, QueryChannelsLogicProvider {
+) : ChannelStateLogicProvider, QueryChannelsRequestHandlerProvider {
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsLogic> =
         ConcurrentHashMap()

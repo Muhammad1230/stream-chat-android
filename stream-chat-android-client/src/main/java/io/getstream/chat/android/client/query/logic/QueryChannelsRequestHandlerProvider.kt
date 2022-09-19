@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.plugin.logic.internal
+package io.getstream.chat.android.client.query.logic
 
 import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsLogic
 
-internal interface QueryChannelsLogicProvider {
+public interface QueryChannelsRequestHandlerProvider {
 
-    fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsLogic
+    public fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelRequestHandler
 
-    fun queryChannels(queryChannelsRequest: QueryChannelsRequest): QueryChannelsLogic
+    public fun queryChannels(queryChannelsRequest: QueryChannelsRequest): QueryChannelRequestHandler
 }

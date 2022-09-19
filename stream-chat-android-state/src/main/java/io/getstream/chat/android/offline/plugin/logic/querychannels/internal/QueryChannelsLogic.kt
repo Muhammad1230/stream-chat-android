@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelConfig
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.query.logic.QueryChannelRequestHandler
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.query.request.ChannelFilterRequest.filterWithOffset
 import io.getstream.chat.android.client.utils.Result
@@ -47,11 +48,11 @@ internal class QueryChannelsLogic(
     private val client: ChatClient,
     private val queryChannelsStateLogic: QueryChannelsStateLogic?,
     private val queryChannelsDatabaseLogic: QueryChannelsDatabaseLogic?,
-) {
+): QueryChannelRequestHandler {
 
     private val logger = StreamLog.getLogger("QueryChannelsLogic")
 
-    internal suspend fun queryOffline(pagination: AnyChannelPaginationRequest) {
+    override suspend fun queryOffline(pagination: AnyChannelPaginationRequest) {
         if (queryChannelsStateLogic?.isLoading() == true) {
             logger.i { "[queryOffline] another query channels request is in progress. Ignoring this request." }
             return
@@ -68,7 +69,7 @@ internal class QueryChannelsLogic(
         }
     }
 
-    internal fun setCurrentRequest(request: QueryChannelsRequest) {
+    override fun setCurrentRequest(request: QueryChannelsRequest) {
         queryChannelsStateLogic?.setCurrentRequest(request)
     }
 
@@ -120,7 +121,7 @@ internal class QueryChannelsLogic(
         }
     }
 
-    suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
+    override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
         logger.d { "[onQueryChannelsResult] result.isSuccess: ${result.isSuccess}, request: $request" }
         onOnlineQueryResult(result, request)
 

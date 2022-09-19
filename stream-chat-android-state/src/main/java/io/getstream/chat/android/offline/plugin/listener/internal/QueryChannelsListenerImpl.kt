@@ -24,16 +24,16 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.QueryChannelsPaginationRequest
 import io.getstream.chat.android.offline.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.offline.plugin.logic.internal.QueryChannelsLogicProvider
+import io.getstream.chat.android.client.query.logic.QueryChannelsRequestHandlerProvider
 
 /**
  * [QueryChannelsListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
  * Handles querying the channel offline and managing local state updates.
  *
- * @param logic [LogicRegistry] provided by the [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
+ * @param logicProvider [QueryChannelsRequestHandlerProvider] 
  */
 internal class QueryChannelsListenerImpl(
-    private val logicProvider: QueryChannelsLogicProvider,
+    private val logicProvider: QueryChannelsRequestHandlerProvider,
 ) : QueryChannelsListener {
 
     override suspend fun onQueryChannelsPrecondition(request: QueryChannelsRequest): Result<Unit> {
