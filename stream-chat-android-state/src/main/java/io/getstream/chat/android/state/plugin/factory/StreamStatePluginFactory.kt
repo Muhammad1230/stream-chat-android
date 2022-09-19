@@ -225,7 +225,7 @@ public class StreamStatePluginFactory(
 
         return StatePlugin(
             activeUser = user,
-            queryChannelsListener = QueryChannelsListenerImpl(logic),
+            queryChannelsListener = chatClient.getQueryChannelsListener()!!,
             queryChannelListener = QueryChannelListenerImpl(logic),
             threadQueryListener = ThreadQueryListenerFull(logic, repositoryFacade, repositoryFacade, getMessageFun),
             channelMarkReadListener = ChannelMarkReadListenerState(channelMarkReadHelper),

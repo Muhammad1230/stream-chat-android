@@ -585,6 +585,11 @@ internal constructor(
         }
     }
 
+    //Todo: Change this!
+    public fun getQueryChannelsListener(): QueryChannelsListener? {
+        return null
+    }
+
     /**
      * Changes the user. Disconnects the current user and connects to a new one.
      * The [tokenProvider] implementation is used for the initial token,
