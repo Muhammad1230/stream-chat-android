@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.models
+package io.getstream.chat.android.models
 
 /**
- * Represents a warning related to message search results. For example, if there are more
- * than 500 channels that match the channel filter.
+ * An enumeration of various network types used as a constraint in
+ * [io.getstream.chat.android.offline.internal.message.attachments.UploadAttachmentsAndroidWorker].
  */
-public data class SearchWarning(
+public enum class UploadAttachmentsNetworkType {
     /**
-     * Channel CIDs for the searched channels
+     * Any working network connection is required.
      */
-    val channelSearchCids: List<String>,
+    CONNECTED,
 
     /**
-     * Number of channels searched
+     * An unmetered network connection is required.
      */
-    val channelSearchCount: Int,
+    UNMETERED,
 
     /**
-     * Code corresponding to the warning
+     * A non-roaming network connection is required.
      */
-    val warningCode: Int,
+    NOT_ROAMING,
 
     /**
-     * Description of the warning
+     * A metered network connection is required.
      */
-    val warningDescription: String,
-)
+    METERED;
+}

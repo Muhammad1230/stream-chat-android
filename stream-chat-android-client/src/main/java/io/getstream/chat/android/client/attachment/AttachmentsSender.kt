@@ -22,10 +22,10 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.internal.hasPendingAttachments
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.filterNot
